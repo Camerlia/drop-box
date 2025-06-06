@@ -10,16 +10,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Parse request body
+   
     const body = await request.json();
     const { imagekit, userId: bodyUserId } = body;
 
-    // Verify the user is uploading to their own account
+   
     if (bodyUserId !== userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Validate ImageKit response
+   
     if (!imagekit || !imagekit.url) {
       return NextResponse.json(
         { error: "Invalid file upload data" },
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Extract file information from ImageKit response
+    
     const fileData = {
       name: imagekit.name || "Untitled",
       path: imagekit.filePath || `/droply/${userId}/${imagekit.name}`,
@@ -36,13 +36,13 @@ export async function POST(request: NextRequest) {
       fileUrl: imagekit.url,
       thumbnailUrl: imagekit.thumbnailUrl || null,
       userId: userId,
-      parentId: null, // Root level by default
+      parentId: null, 
       isFolder: false,
       isStarred: false,
       isTrash: false,
     };
 
-    // Insert file record into database
+   
     const [newFile] = await db.insert(files).values(fileData).returning();
 
     return NextResponse.json(newFile);
